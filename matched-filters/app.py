@@ -1,12 +1,15 @@
-from flask import Flask, send_file, make_response
+from flask import Flask, send_file, Response
+from flask_cors import CORS
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matchedFilters import MatchedFilter
 import matplotlib.pyplot as plt
 import io
 import base64
 
 app = Flask(__name__)
+CORS(app)
 
-@app.route('/', methods=['GET'])
+@app.route('/plot', methods=['GET'])
 def build_plot():
     w = 640
     h = 360
@@ -17,11 +20,10 @@ def build_plot():
     o = [0.0, 0.0, 0.0]
     a = [1.0, 0.0, 0.0]
     mf = MatchedFilter(w, h, fov, fov_type, orientation=o, axis=a)
-    bytes_plot = mf.plot()
-
-    return send_file(bytes_plot,
-                     attachment_filename='plot.png',
-                     mimetype='image/png')
+    fig = mf.plot()
+    output = io.BytesIO()
+    FigureCanvas(fig).print_png(output)
+    return Response(output.getvalue(), mimetype='image/png')
 
 
 if __name__ == '__main__':

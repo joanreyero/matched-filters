@@ -73,7 +73,7 @@ class MatchedFilter():
     def generate_filter(self, orientation, axis):
         axis = np.matmul(np.array([[0, 1, 0], [0, 0, 1], [1, 0, 0]]),
                          np.array(axis, dtype=float))
-        orientation = np.array(map(float, orientation))
+        orientation = list(map(float, orientation))
 
         D = self._get_anticipated_viewing_directions(np.array(orientation,
                                                               dtype=float))
@@ -105,6 +105,9 @@ class MatchedFilter():
         :return:
         """
         import matplotlib.pyplot as plt
+        from matplotlib.figure import Figure
+        fig = Figure()
+        axis = fig.add_subplot(1, 1, 1)
         Y = ((np.arange(self.cam_h, dtype=float) - self.cam_h / 2.0))
              #/ float(self.cam_h)) * self.fovy
         X = ((np.arange(self.cam_w, dtype=float) - self.cam_w / 2.0))
@@ -113,15 +116,12 @@ class MatchedFilter():
         V = self.matched_filter[:, :, 1]
         step_size = 40
         scale = None
-        plt.quiver(X[::step_size], Y[::step_size],
-                   U[::step_size, ::step_size],
-                   V[::step_size, ::step_size],
-                   pivot='mid', scale=scale)
-        # Saving the figure into a bytes to serve it via flask
-        bytes_image = io.BytesIO()
-        plt.savefig(bytes_image, format='png')
-        bytes_image.seek(0)
-        return bytes_image
+        axis.quiver(X[::step_size], Y[::step_size],
+                    U[::step_size, ::step_size],
+                    V[::step_size, ::step_size],
+                    pivot='mid', scale=scale)
+        return fig
+        
 
     
 if __name__ == '__main__':
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create matched filters')
     parser.add_argument('--width', type=int, default=640,
                         help="""Camera's width
-                        Default: 300""")
+                        Default: 640""")
     parser.add_argument('--height', type=int, default=360,
                         help="""Camera's height
                         Default: 300""")

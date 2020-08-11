@@ -54,12 +54,28 @@ export default {
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
-  axios: {},
+  axios: {
+    baseURL: (process.env.NODE_ENV == 'production') ?
+      '' : 'http://127.0.0.1:5000',
+    //headers: {
+      // 'Content-Type': 'application/json',
+    //  'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8'
+    //}
+  },
+  proxy: {
+    '/api': {
+      target: 'http://127.0.0.1:5000',
+      pathRewrite: {
+        '^/api' : '/'
+        }
+      }
+  },
   /*
   ** Build configuration
   ** See https://nuxtjs.org/api/configuration-build/
