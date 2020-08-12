@@ -93,7 +93,8 @@
                      font-medium border-2 border-blue-500 
                      text-blue-500 rounded-md w-48 h-16
                      hover:font-bold hover:shadow-md z-30"
-              style="bottom: 25px">
+              style="bottom: 25px"
+              @click="updatePlot()">
         Plot
       </button>
     </div>
@@ -105,16 +106,18 @@ export default {
   data: function() {
     return {
       editCamera: false,
-      camera: {
-        x: 640,
-        y: 360,
-        fovType: 'K',
-        fov: ['205.46963709898583', '0.0', '320.5',
-              '0.0', '205.46963709898583', '180.5',
-              '0.0', '0.0', '1.0'],
-        orientation: ['0.0', '0.0', '0.0'],
-        axis: ['1.0', '0.0', '0.0']
-      }
+    }
+  },
+
+  props: {
+    camera: {
+      required: true
+    }
+  },
+  
+  methods: {
+    updatePlot() {
+      this.$emit('updatePlot')
     }
   }
 }

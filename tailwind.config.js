@@ -8,7 +8,8 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: ['Open Sans'],
-      serif: ['Montserrat']
+      serif: ['Montserrat'],
+      mono: ['Courier Prime']
     }
   },
   variants: {},

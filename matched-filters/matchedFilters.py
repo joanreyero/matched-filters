@@ -14,6 +14,8 @@ class MatchedFilter():
             self.fovx, self.fovy = MatchedFilter._get_fov(fov, cam_w, cam_h)
         else:
             self.fovx, self.fovy = fov[0], fov[1]
+        self.D = self._get_viewing_directions(np.array(orientation,
+                                                       dtype=float))
         self.matched_filter = self.generate_filter(orientation, axis)
 
     @staticmethod
@@ -26,7 +28,7 @@ class MatchedFilter():
         return (compute_fov(cam_w, float(K_flat[0])),
                 compute_fov(cam_h, float(K_flat[4])))
 
-    def _get_anticipated_viewing_directions(self, orientation):
+    def _get_viewing_directions(self, orientation):
         vertical_views = (((np.arange(self.cam_h, dtype=float) -
                             self.cam_h / 2.0) / float(self.cam_h)) *
                           self.fovy)
@@ -75,28 +77,26 @@ class MatchedFilter():
                          np.array(axis, dtype=float))
         orientation = list(map(float, orientation))
 
-        D = self._get_anticipated_viewing_directions(np.array(orientation,
-                                                              dtype=float))
         #return D
         #print D.shape
         #self.plot_D(D, axis)
         # Transform to camera coordinates
 
-        sin_theta = np.linalg.norm(D[:, :, 0:2], axis=2) + 1e-14
+        sin_theta = np.linalg.norm(self.D[:, :, 0:2], axis=2) + 1e-14
         sin_theta = np.repeat(sin_theta[:, :, np.newaxis], 2, axis=2)
-        mag_temp = np.linalg.norm(D, axis=2)
-        D /= np.expand_dims(mag_temp, axis=2)
-        mf = np.cross(np.cross(D, axis), D)[:, :, 0:2]
+        mag_temp = np.linalg.norm(self.D, axis=2)
+        self.D /= np.expand_dims(mag_temp, axis=2)
+        mf = np.cross(np.cross(self.D, axis), self.D)[:, :, 0:2]
         return mf
 
-    def  plot_D(self, D, axis):
+    def  plot_D(self):
         import matplotlib.pyplot as plt
         from mpl_toolkits.mplot3d import Axes3D
         fig = plt.figure()
 #        ax = Axes3d(fig)
         ax = fig.add_subplot(111, projection='3d')
 
-        ax.plot(D[:,:,0], D[:,:,1])
+        ax.plot(self.D[:,:,0], self.D[:,:,1])
         plt.show()
 
     def plot(self):
@@ -121,7 +121,11 @@ class MatchedFilter():
                     V[::step_size, ::step_size],
                     pivot='mid', scale=scale)
         return fig
-        
+
+    def get_matched_filter_str(self):
+        print(np.array_str(self.matched_filter))
+        return np.array_str(self.matched_filter)
+
 
     
 if __name__ == '__main__':
