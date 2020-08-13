@@ -36,12 +36,24 @@ class MatchedFilter():
                               self.cam_w / 2.0) / float(self.cam_w)) *
                             self.fovx)
         D = -np.ones([self.cam_h, self.cam_w, 3])
-        print(D[3])
         D[:, :, 0], D[:, :, 1] = np.meshgrid(np.tan(horizontal_views),
                                              np.tan(vertical_views))
         #return D
-        
-        return self._rotate_viewing_directions(D, orientation)
+        self.plot_D(D)
+        D = self._rotate_viewing_directions(D, orientation)
+        self.plot_D(D)
+        return D
+
+    def  plot_D(self, D):
+        import matplotlib.pyplot as plt
+        from mpl_toolkits.mplot3d import Axes3D
+        fig = plt.figure()
+#        ax = Axes3d(fig)
+        ax = fig.add_subplot(111, projection='3d')
+        surf = ax.plot_surface(D[:,:,0],D[:,:,1], D[:, :, 2])
+#        ax.plot(D[:,:,0], D[:,:,1])
+        plt.show()
+
 
     def _rotate_viewing_directions(self, D, orientation):
         rot_mat = self._rotation_matrix_from_rpy_degs(orientation)
@@ -85,19 +97,9 @@ class MatchedFilter():
         sin_theta = np.linalg.norm(self.D[:, :, 0:2], axis=2) + 1e-14
         sin_theta = np.repeat(sin_theta[:, :, np.newaxis], 2, axis=2)
         mag_temp = np.linalg.norm(self.D, axis=2)
-        self.D /= np.expand_dims(mag_temp, axis=2)
+#        self.D /= np.expand_dims(mag_temp, axis=2)
         mf = np.cross(np.cross(self.D, axis), self.D)[:, :, 0:2]
         return mf
-
-    def  plot_D(self):
-        import matplotlib.pyplot as plt
-        from mpl_toolkits.mplot3d import Axes3D
-        fig = plt.figure()
-#        ax = Axes3d(fig)
-        ax = fig.add_subplot(111, projection='3d')
-
-        ax.plot(self.D[:,:,0], self.D[:,:,1])
-        plt.show()
 
     def plot(self):
         """
@@ -164,7 +166,6 @@ if __name__ == '__main__':
                        args.fov, args.fov_type,
                        orientation=args.orientation,
                        axis=args.axis)
-    mf.plot()
 
     
 
