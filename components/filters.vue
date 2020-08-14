@@ -1,16 +1,17 @@
 <template>
-  <div class="w-screen h-screen overflow-hidden bg-gray-300 p-10">
+  <div class="w-screen h-screen overflow-hidden bg-gray-100 p-0">
     <matrix :show="showMatrix" :filter="filter" @hideMatrix="hideMatrix()"/>
     <div class="main block lg:hidden text-center py-24">
       <p class="text-lg"> Currently the application is only supported on computer screens. </p>
     </div>
     <div class="main hidden lg:flex text-center flex-wrap">
-      <h1 class="w-full pt-10"> Matched Filter Generator </h1>
-      <div class="panel overflow-scroll">
-        <editor @updatePlot="getPlot()" :camera="camera"/>
+      <h1 class="w-full pt-8"> Matched Filter Generator </h1>
+      <div class="panel">
+        <editor @updatePlot="updatePlot()" 
+                :camera="camera" :orientation="orientation" :axis="axis"/>
       </div>
       <div class="panel">
-        <plot :src="plot"/>
+        <plots :active="activePlot" :src="plot" @changeActive="changeActive"/>
         <div class="w-full pt-10 text-center">
           <button class="bg-blue-500 text-base font-medium border-2 border-gray-100 
                          text-gray-100 rounded-md w-48 h-16
@@ -36,30 +37,42 @@ export default {
         fovType: 'K',
         fov: ['205.46963709898583', '0.0', '320.5',
               '0.0', '205.46963709898583', '180.5',
-              '0.0', '0.0', '1.0'],
-        orientation: ['0.0', '0.0', '0.0'],
-        axis: ['1.0', '0.0', '0.0']
+              '0.0', '0.0', '1.0']
       },
-      showMatrix: false
+      orientation: ['0.0', '0.0', '0.0'],
+      axis: ['1.0', '0.0', '0.0'],
+      showMatrix: false,
+      activePlot: 'pos',
     }
   },
 
   methods: {    
-    getPlot() {
-    let _vm = this;
-     this.$axios.get('/plot', {responseType: 'blob', params: this.camera})
-        .then(function(response) {
-          let plot = response.data[0];
-          console.log(response.data)
-          let matrix = response.data[1];
-          let threeD = response.data[2];
-          //_vm.plot = response.data
-          let reader = new FileReader();
-          reader.readAsDataURL(new Blob([response.data])); 
-          reader.onload = () => {
-            _vm.plot = reader.result;
-          }
-        });
+
+    updatePlot() {
+      let camera = this.camera;
+      camera.orientation = this.orientation;
+      camera.axis = this.axis;
+
+      let url = this.activePlot == 'pos' ? '/pos' : '/plot';
+      console.log(url)
+      this.getPlot(camera, url)
+    },
+
+    getPlot(camera, url) {
+      let _vm = this;
+      this.$axios.get(url, {responseType: 'blob', params: this.camera})
+          .then(function(response) {
+            let reader = new FileReader();
+            reader.readAsDataURL(new Blob([response.data])); 
+            reader.onload = () => {
+              _vm.plot = reader.result;
+            }
+          });
+    },
+
+    changeActive(n) {
+      this.activePlot = n
+      this.updatePlot()
     },
 
     hideMatrix() {
@@ -68,9 +81,12 @@ export default {
     },
 
     getFilter() {
+      let camera = this.camera;
+      camera.orientation = this.orientation;
+      camera.axis = this.axis;
       this.showMatrix = true
       let _vm = this;
-      this.$axios.get('/matched_filter', {params: this.camera})
+      this.$axios.get('/matched_filter', {params: camera})
         .then(function(response) {
           _vm.filter = response.data
         });
@@ -78,7 +94,18 @@ export default {
   },
 
   mounted() {
-    this.getPlot()
+    this.updatePlot()
+    //this.getPos()
+  },
+
+  watch: {
+    orientation() {
+      this.updatePlot()
+    },
+
+    axis() {
+      this.updatePlot()
+    }
   }
 }
 </script>
@@ -98,7 +125,8 @@ export default {
   }
 
   .panel {
-    @apply w-1/2 h-full pt-16;
+    @apply w-1/2 py-8 overflow-scroll;
+    height: calc(100vh - 86px)
   }
 
   h1 {

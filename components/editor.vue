@@ -68,35 +68,55 @@
       <button class="bg-gray-100 mt-32 text-base font-medium border-2 border-blue-500 
                      text-blue-500 rounded-md w-40 h-12
                      hover:font-bold hover:shadow-md"
-              @click="editCamera=false">
+              @click="stopEditingCamera()">
         Done
       </button>
     </div>
-    <div class="w-5/6 shadow-lg rounded-md mx-auto text-center mt-8 border-2 pb-20 pt-8"
-         style="height:500px">
+    <div class="w-5/6 shadow-lg rounded-md mx-auto text-center mt-8 border-2 pb-20 pt-8">
       <h2> Orientation of the camera </h2>
-      <p class="mt-3"> Respect to the world, and in  degrees </p>
+      <p class="mt-3"> Euler angles in  degrees </p>
       <ul class="mt-2">
-        <li> Yaw: <input class="input-lg" v-model="camera.orientation[0]"/></li>
-        <li> Pich: <input class="input-lg" v-model="camera.orientation[1]"/></li>
-        <li> Roll: <input class="input-lg" v-model="camera.orientation[2]"/></li>
+        <li> Yaw: <input class="input-lg" v-model="orientation[0]"/></li>
+        <li> Pich: <input class="input-lg" v-model="orientation[1]"/></li>
+        <li> Roll: <input class="input-lg" v-model="orientation[2]"/></li>
       </ul> 
+      <div class="w-3/4 mx-auto text-center mt-4">
+        <p> x axis rotation (yaw): </p>
+        <vue-slider :lazy="true" :min="0" :max="365"
+                    v-model="orientation[0]"></vue-slider>
+      </div>
+      <div class="w-3/4 mx-auto text-center">
+        <p> y axis rotation (pitch): </p>
+        <vue-slider :lazy="true" :min="0" :max="365"
+                    v-model="orientation[1]"></vue-slider>
+      </div>
+      <div class="w-3/4 mx-auto text-center">
+        <p> z axis rotation (roll): </p>
+        <vue-slider :lazy="true" :min="0" :max="365"
+                    v-model="orientation[2]"></vue-slider>
+      </div>
       <h2 class="mt-6"> Filter's prefered axis </h2>
-      <p class="mt-3"> A vector in world coordinate frame </p>
+      <p class="mt-3"> Euler angles in  degrees </p>
       <ul class="mt-2">
-        <li> x: <input class="input-lg" v-model="camera.axis[0]"/></li>
-        <li> y: <input class="input-lg" v-model="camera.axis[1]"/></li>
-        <li> z: <input class="input-lg" v-model="camera.axis[2]"/></li>
-      </ul> 
-
-      <button class="absolute left-0 right-0 mx-auto bg-gray-100 mt-8 text-base 
-                     font-medium border-2 border-blue-500 
-                     text-blue-500 rounded-md w-48 h-16
-                     hover:font-bold hover:shadow-md z-30"
-              style="bottom: 25px"
-              @click="updatePlot()">
-        Plot
-      </button>
+        <li> x: <input class="input-lg" v-model="axis[0]"/></li>
+        <li> y: <input class="input-lg" v-model="axis[1]"/></li>
+        <li> z: <input class="input-lg" v-model="axis[2]"/></li>
+      </ul>
+      <div class="w-3/4 mx-auto text-center mt-4">
+        <p> x axis rotation (yaw): </p>
+        <vue-slider :lazy="true" :min="0" :max="365"
+                    v-model="axis[0]"></vue-slider>
+      </div>
+      <div class="w-3/4 mx-auto text-center">
+        <p> y axis rotation (pitch): </p>
+        <vue-slider :lazy="true" :min="0" :max="365"
+                    v-model="axis[1]"></vue-slider>
+      </div>
+      <div class="w-3/4 mx-auto text-center">
+        <p> z axis rotation (roll): </p>
+        <vue-slider :lazy="true" :min="0" :max="365"
+                    v-model="axis[2]"></vue-slider>
+      </div>
     </div>
   </div>
 </template>
@@ -105,6 +125,7 @@
 
 
 export default {
+
   data: function() {
     return {
       editCamera: false,
@@ -114,14 +135,26 @@ export default {
   props: {
     camera: {
       required: true
+    },
+    orientation: {
+      required: true
+    },
+    axis: {
+      required: true
     }
   },
   
   methods: {
     updatePlot() {
       this.$emit('updatePlot')
+    },
+
+    stopEditingCamera() {
+      this.editCamera = false
+      this.updatePlot()
     }
-  }
+  },
+
 }
 </script>
 
