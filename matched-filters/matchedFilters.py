@@ -7,7 +7,7 @@ class MatchedFilter():
     def __init__(self, cam_w, cam_h, fov, fov_type='fov',
                  orientation=[0.0, 0.0, 0.0],
                  axis=[1.0, 0.0, 0.0]):
-        self.axis = np.array(axis, dtype=float)
+
         self.cam_w = cam_w
         self.cam_h = cam_h
         if fov_type in ['K', 'intrinsic_matrix']:
@@ -17,6 +17,8 @@ class MatchedFilter():
 
         orientation = np.array(orientation, dtype=float)
         self.rot_mat = self._rotation_matrix(orientation)
+        axis = np.array(axis, dtype=float)
+        self.axis = np.matmul(self._rotation_matrix(axis), np.array([0, 0, 1]))
         self.D = self._get_viewing_directions(orientation)
         self.matched_filter = self.generate_filter()
 
@@ -38,7 +40,7 @@ class MatchedFilter():
         horizontal_views = (((np.arange(self.cam_w, dtype=float) -
                               self.cam_w / 2.0) / float(self.cam_w)) *
                             self.fovx)
-        D = -np.ones([self.cam_h, self.cam_w, 3])
+        D = np.ones([self.cam_h, self.cam_w, 3])
         D[:, :, 0], D[:, :, 1] = np.meshgrid(np.tan(horizontal_views),
                                              np.tan(vertical_views))
         #return D
@@ -104,8 +106,8 @@ class MatchedFilter():
         sin_theta = np.repeat(sin_theta[:, :, np.newaxis], 2, axis=2)
         mag_temp = np.linalg.norm(self.D, axis=2)
         D = self.D / np.expand_dims(mag_temp, axis=2)
-        return D
-        mf = np.cross(np.cross(D, self.axis), D)[:, :, 0:2] / sin_theta
+#        return D
+        mf = -np.cross(np.cross(D, self.axis), D)[:, :, 0:2] / sin_theta
         return mf
 
     def plot(self, show=False):
@@ -122,10 +124,10 @@ class MatchedFilter():
         else:
             fig, axis = plt.subplots()
 
-        Y = ((np.arange(self.cam_h, dtype=float) - self.cam_h / 2.0))
-             #/ float(self.cam_h)) * self.fovy
-        X = ((np.arange(self.cam_w, dtype=float) - self.cam_w / 2.0))
-             #/ float(self.cam_w)) * self.fovx
+        Y = ((np.arange(self.cam_h, dtype=float) - self.cam_h / 2.0)
+             / float(self.cam_h)) * self.fovy
+        X = ((np.arange(self.cam_w, dtype=float) - self.cam_w / 2.0)
+             / float(self.cam_w)) * self.fovx
         U = self.matched_filter[:, :, 0]
         V = self.matched_filter[:, :, 1]
         step_size = 40
@@ -168,10 +170,10 @@ if __name__ == '__main__':
                         Either 'fov' if fovx and fovy are given,
                         or 'K' if the intrinsic matrix is given.
                         Default: K""")
-    parser.add_argument('-o', '--orientation', nargs='+', default=[0.0, -90.0, 0.0],
+    parser.add_argument('-o', '--orientation', nargs='+', default=[0.0, 0.0, 0.0],
                         help="""Orientation of the camera. [yaw, pitch, roll]
                         Default [0.0, 90.0, 0.0]""")
-    parser.add_argument('-a', '--axis', nargs='+', default=[1.0, 0.0, 0.0],
+    parser.add_argument('-a', '--axis', nargs='+', default=[0.0, 0.0, 0.0],
                         help="""Prefered axis of orientation
                         Default: [1.0, 0.0, 0.0]""")
     args = parser.parse_args()
