@@ -66,6 +66,7 @@ export default {
             reader.readAsDataURL(new Blob([response.data])); 
             reader.onload = () => {
               _vm.plot = reader.result;
+              console.log('loaded here')
             }
           });
     },
