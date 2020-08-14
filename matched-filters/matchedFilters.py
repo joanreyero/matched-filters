@@ -45,7 +45,7 @@ class MatchedFilter():
                                              np.tan(vertical_views))
         #return D
         D = self._rotate_viewing_directions(D, orientation)
-        self.plot_D(D)
+        #XSself.plot_D(D)
         return D
 
     def  plot_D(self, D):
@@ -124,10 +124,10 @@ class MatchedFilter():
         else:
             fig, axis = plt.subplots()
 
-        Y = ((np.arange(self.cam_h, dtype=float) - self.cam_h / 2.0)
-             / float(self.cam_h)) * self.fovy
-        X = ((np.arange(self.cam_w, dtype=float) - self.cam_w / 2.0)
-             / float(self.cam_w)) * self.fovx
+        Y = ((np.arange(self.cam_h, dtype=float) - self.cam_h / 2.0))
+
+        X = ((np.arange(self.cam_w, dtype=float) - self.cam_w / 2.0))
+
         U = self.matched_filter[:, :, 0]
         V = self.matched_filter[:, :, 1]
         step_size = 40
