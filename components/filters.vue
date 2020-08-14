@@ -52,7 +52,6 @@ export default {
   methods: {    
 
     updatePlot() {
-      this.loading = true;
       let camera = this.camera;
       camera.orientation = this.orientation;
       camera.axis = this.axis;
@@ -61,6 +60,7 @@ export default {
         console.log('canceling')
         this.nextUp = {camera: camera, url: url}
       }
+      this.loading = true;
       this.getPlot(camera, url)
     },
 
@@ -70,14 +70,14 @@ export default {
           .then(function(response) {
             let reader = new FileReader();
             reader.readAsDataURL(new Blob([response.data]));
+            
             reader.onload = () => {
+              _vm.nextUp = false
               if (!(_vm.nextUp)) {
                 _vm.plot = reader.result;
-                _vm.nextUp = false
                 _vm.loading = false
               }
               else {
-                _vm.nextUp = false
                 _vm.getPlot(_vm.nextUp.camera, _vm.nextUp.url)
               }
             }
