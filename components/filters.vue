@@ -26,6 +26,7 @@
 </template>
 
 <script>
+
 export default {
   data: function() {
     return {
@@ -44,43 +45,42 @@ export default {
       showMatrix: false,
       activePlot: 'pos',
       loading: false,
-      source: this.$axios.CancelToken.source()
+      nextUp: false
     }
   },
 
   methods: {    
 
     updatePlot() {
-      if (this.loading) {
-        this.source.cancel('Canceled')
-        console.log('canceling')
-      }
       this.loading = true;
       let camera = this.camera;
       camera.orientation = this.orientation;
       camera.axis = this.axis;
       let url = this.activePlot == 'pos' ? '/pos' : '/plot';
-      console.log(url)
+      if (this.loading) {
+        console.log('canceling')
+        this.nextUp = {camera: camera, url: url}
+      }
       this.getPlot(camera, url)
     },
 
     getPlot(camera, url) {
       let _vm = this;
-      this.$axios.get(url, {responseType: 'blob', params: this.camera, CancelToken:this.source.token})
+      this.$axios.get(url, {responseType: 'blob', params: this.camera})
           .then(function(response) {
             let reader = new FileReader();
             reader.readAsDataURL(new Blob([response.data]));
             reader.onload = () => {
+              if (!(_vm.nextUp)) {
               _vm.plot = reader.result;
               _vm.loading = false
+              }
+              else {
+                _vm.getPlot(_vm.nextUp.camera, _vm.nextUp.url)
+              }
+              _vm.nextUp = false
             }
-          }).catch(error => {
-  if (this.$axios.isCancel(error)) {
-    console.log('Request canceled', error)
-  } else {
-    console.log('other')
-  }
-});
+          });
     },
 
     changeActive(n) {
