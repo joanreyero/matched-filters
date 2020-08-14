@@ -11,7 +11,7 @@
                 :camera="camera" :orientation="orientation" :axis="axis"/>
       </div>
       <div class="panel">
-        <plots :active="activePlot" :src="plot" @changeActive="changeActive"/>
+        <plots :loading="loading" :active="activePlot" :src="plot" @changeActive="changeActive"/>
         <div class="w-full pt-10 text-center">
           <button class="bg-blue-500 text-base font-medium border-2 border-gray-100 
                          text-gray-100 rounded-md w-48 h-16
@@ -57,11 +57,13 @@ export default {
       camera.axis = this.axis;
       let url = this.activePlot == 'pos' ? '/pos' : '/plot';
       if (this.loading) {
-        console.log('canceling')
+
         this.nextUp = {camera: camera, url: url}
       }
+      else {
       this.loading = true;
       this.getPlot(camera, url)
+      }
     },
 
     getPlot(camera, url) {
@@ -72,13 +74,15 @@ export default {
             reader.readAsDataURL(new Blob([response.data]));
             
             reader.onload = () => {
-              _vm.nextUp = false
               if (!(_vm.nextUp)) {
                 _vm.plot = reader.result;
                 _vm.loading = false
               }
               else {
-                _vm.getPlot(_vm.nextUp.camera, _vm.nextUp.url)
+                let camera = _vm.nextUp.camera
+                let url = _vm.nextUp.url
+                _vm.nextUp = false
+                _vm.getPlot(camera, url)
               }
             }
           });

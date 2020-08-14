@@ -17,8 +17,9 @@
         </button>
       </div>
     </div>
-    <div class="w-11/12 mx-auto max-w-3xl pt-8">
+    <div class="w-11/12 mx-auto max-w-3xl pt-8 relative">
       <img :src="src" class="rounded-lg mx-auto shadow-lg border-gray-300 border w-full"/>
+      <p v-if="loading" class="loading"> Loading </p>
     </div>
   </div>
 </template>
@@ -31,6 +32,11 @@ export default {
     },
     active: {
       required: true
+    },
+    loading: {
+      required: false,
+      type: Boolean,
+      default: false
     }
   },
 
@@ -45,6 +51,10 @@ export default {
 </script>
 
 <style>
+
+.loading {
+  @apply absolute left-0 right-0 mx-auto opacity-75 w-1/2 px-10 pt-6 bg-gray-600 text-gray-100 rounded-lg shadow-md top-0 bottom-0 my-auto h-20;
+}
 
 .active {
   @apply bg-gray-500 text-gray-100 pointer-events-none;
