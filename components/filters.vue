@@ -72,13 +72,14 @@ export default {
             reader.readAsDataURL(new Blob([response.data]));
             reader.onload = () => {
               if (!(_vm.nextUp)) {
-              _vm.plot = reader.result;
-              _vm.loading = false
+                _vm.plot = reader.result;
+                _vm.nextUp = false
+                _vm.loading = false
               }
               else {
+                _vm.nextUp = false
                 _vm.getPlot(_vm.nextUp.camera, _vm.nextUp.url)
               }
-              _vm.nextUp = false
             }
           });
     },
