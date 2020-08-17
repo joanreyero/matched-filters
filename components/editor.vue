@@ -76,12 +76,12 @@
       <h2> Orientation of the camera </h2>
       <p class="mt-3"> Euler angles in  degrees </p>
       <ul class="mt-2">
-        <li> Yaw: <input class="input-lg" v-model="orientation[0]"/></li>
-        <li> Pich: <input class="input-lg" v-model="orientation[1]"/></li>
-        <li> Roll: <input class="input-lg" v-model="orientation[2]"/></li>
+        <li> Roll (x): <input class="input-lg" v-model="orientation[0]"/></li>
+        <li> Pich (y): <input class="input-lg" v-model="orientation[1]"/></li>
+        <li> Yaw (z): <input class="input-lg" v-model="orientation[2]"/></li>
       </ul> 
       <div class="w-3/4 mx-auto text-center mt-4">
-        <p> x axis rotation (yaw): </p>
+        <p> x axis rotation (roll): </p>
         <vue-slider :lazy="true" :min="0" :max="365"
                     v-model="orientation[0]"></vue-slider>
       </div>
@@ -91,19 +91,19 @@
                     v-model="orientation[1]"></vue-slider>
       </div>
       <div class="w-3/4 mx-auto text-center">
-        <p> z axis rotation (roll): </p>
+        <p> z axis rotation (yaw): </p>
         <vue-slider :lazy="true" :min="0" :max="365"
                     v-model="orientation[2]"></vue-slider>
       </div>
       <h2 class="mt-6"> Filter's prefered axis </h2>
       <p class="mt-3"> Euler angles in  degrees </p>
       <ul class="mt-2">
-        <li> x: <input class="input-lg" v-model="axis[0]"/></li>
-        <li> y: <input class="input-lg" v-model="axis[1]"/></li>
-        <li> z: <input class="input-lg" v-model="axis[2]"/></li>
+        <li> Roll (x): <input class="input-lg" v-model="axis[0]"/></li>
+        <li> Pitch (y): <input class="input-lg" v-model="axis[1]"/></li>
+        <li> Yaw (z): <input class="input-lg" v-model="axis[2]"/></li>
       </ul>
       <div class="w-3/4 mx-auto text-center mt-4">
-        <p> x axis rotation (yaw): </p>
+        <p> x axis rotation (roll): </p>
         <vue-slider :lazy="true" :min="0" :max="365"
                     v-model="axis[0]"></vue-slider>
       </div>
@@ -113,7 +113,7 @@
                     v-model="axis[1]"></vue-slider>
       </div>
       <div class="w-3/4 mx-auto text-center">
-        <p> z axis rotation (roll): </p>
+        <p> z axis rotation (yaw): </p>
         <vue-slider :lazy="true" :min="0" :max="365"
                     v-model="axis[2]"></vue-slider>
       </div>
