@@ -38,6 +38,10 @@ export default {
     {
       src: '~plugins/vue-slider-component.js',
       ssr: false
+    },
+    {
+      src: '~plugins/vue-plotly.js',
+      ssr: false
     }
   ],
   /*

@@ -12,8 +12,11 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.12.0",
     "@nuxtjs/proxy": "^2.0.1",
+    "@statnett/vue-plotly": "^0.3.2",
     "axios-cancel": "^0.2.2",
     "nuxt": "^2.14.0",
+    "plotly.js": "^1.54.7",
+    "vue-plotly": "^1.1.0",
     "vue-slider-component": "^3.2.4"
   },
   "devDependencies": {

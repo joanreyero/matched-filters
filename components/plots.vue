@@ -18,7 +18,8 @@
       </div>
     </div>
     <div class="w-11/12 mx-auto max-w-3xl pt-8 text-center">
-      <img :src="src" class="rounded-lg mx-auto shadow-lg border-gray-300 border w-full"/>
+      <!-- <img :src="src" class="rounded-lg mx-auto shadow-lg border-gray-300 border w-full"/> -->
+      <pt/>
       <p v-if="loading" class="loading mx-auto"> Loading </p>
     </div>
   </div>
