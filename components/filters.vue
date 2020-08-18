@@ -11,7 +11,8 @@
                 :camera="camera" :orientation="orientation" :axis="axis"/>
       </div>
       <div class="panel">
-        <plots :loading="loading" :active="activePlot" :src="plot" @changeActive="changeActive"/>
+        <plots :loading="loading" :active="activePlot" :src="plot" :directions="directions" 
+               @changeActive="changeActive"/>
         <div class="w-full pt-10 text-center">
           <button class="bg-blue-500 text-base font-medium border-2 border-gray-100 
                          text-gray-100 rounded-md w-48 h-16
@@ -42,9 +43,15 @@ export default {
               '0.0', '0.0', '1.0']
       },
       orientation: ['0.0', '0.0', '0.0'],
-      axis: ['1.0', '0.0', '0.0'],
+      axis: ['0.0', '0.0', '0.0'],
       showMatrix: false,
       activePlot: 'pos',
+      directions: {
+        camx: [0, 0, 0],
+        camy: [0, 0, 0],
+        camz: [0, 0, 0],
+        axis: [0, 0, 0]
+      },
       loading: false,
       nextUp: false
     }
@@ -62,14 +69,15 @@ export default {
         this.nextUp = {camera: camera, url: url}
       }
       else {
-      this.loading = true;
-      this.getPlot(camera, url)
+        this.loading = true;
+        this.getPlot(camera, url)
       }
     },
 
     getPlot(camera, url) {
       let _vm = this;
-      this.$axios.get(url, {responseType: 'blob', params: this.camera})
+      if (url == '/plot') {
+        this.$axios.get(url, {responseType: 'blob', params: camera})
           .then(function(response) {
             let reader = new FileReader();
             reader.readAsDataURL(new Blob([response.data]));
@@ -87,6 +95,14 @@ export default {
               }
             }
           });
+      }
+      else {
+        this.$axios.get(url, {params: camera})
+          .then(function(response) {
+            _vm.directions = response.data
+            _vm.loading = false
+          });
+      }
     },
 
     changeActive(n) {

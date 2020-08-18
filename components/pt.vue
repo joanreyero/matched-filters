@@ -9,16 +9,15 @@
 
 export default {
   props: {
-    axis: {
-      type: Array,
-      required: false,
-      default: [0, 0.5, 0.5]
+    directions: {
+      type: Object,
+      required: true,
     }
   },
 
-  data: function() {
-    return {
-      plotData:[{
+  computed: {
+    plotData () {
+      return[{
         x: [0, 0.5],
         y: [0, 0],
         z: [0, 0],
@@ -78,12 +77,31 @@ export default {
       },
       // PDA
       {
-        x: [0, this.axis[0]],
-        y: [0, this.axis[1]],
-        z: [0, this.axis[2]],
+        x: [0, this.directions.axis[0]],
+        y: [0, this.directions.axis[1]],
+        z: [0, this.directions.axis[2]],
         name: 'Filter axis',
         textposition: ["top right"],
         texttemplate: ['', 'PDA'],
+        type:"scatter3d",
+        mode: 'lines+markers+text',
+        line: {
+          width: 5,
+          color: 'orange'},
+        marker: {
+          size: 4,
+          color: ['transparent','gray'],
+          symbol: 'diamond',
+        }
+      },
+      // Camera x
+      {
+        x: [0, this.directions.camx[0]],
+        y: [0, this.directions.camx[1]],
+        z: [0, this.directions.camx[2]],
+        name: 'Camera x',
+        textposition: ["top right"],
+        texttemplate: ['', 'cam x'],
         type:"scatter3d",
         mode: 'lines+markers+text',
         line: {
@@ -94,23 +112,58 @@ export default {
           color: ['transparent','blue'],
           symbol: 'diamond',
         }
-      }],
+      },
+      // Camera y
+      {
+        x: [0, this.directions.camy[0]],
+        y: [0, this.directions.camy[1]],
+        z: [0, this.directions.camy[2]],
+        name: 'Camera y',
+        textposition: ["top right"],
+        texttemplate: ['', 'cam y'],
+        type:"scatter3d",
+        mode: 'lines+markers+text',
+        line: {
+          width: 5,
+          color: 'green'},
+        marker: {
+          size: 4,
+          color: ['transparent','green'],
+          symbol: 'diamond',
+        }
+      },
+      {
+        x: [0, this.directions.camz[0]],
+        y: [0, this.directions.camz[1]],
+        z: [0, this.directions.camz[2]],
+        name: 'Camera z',
+        textposition: ["top right"],
+        texttemplate: ['', 'cam z'],
+        type:"scatter3d",
+        mode: 'lines+markers+text',
+        line: {
+          width: 5,
+          color: 'red'},
+        marker: {
+          size: 4,
+          color: ['transparent','red'],
+          symbol: 'diamond',
+        }
+      }]
+    },
 
-      layout: {
+    layout() {
+      return {
         autosize: true,
         height: 800,
         scene: {
-          domain: {
-            x: [-1, 1],
-            y: [-1, 1],
-            z: [-1, 1]
-          },
+          
           camera: {
-            eye: {
-              x: 1.5,
-              y: 1.5,
-              z: 1.5,
-            },
+            // eye: {
+            //   x: 1.5,
+            //   y: 1.5,
+            //   z: 1.5,
+            // },
             center: {
               x: 0,
               y: 0,

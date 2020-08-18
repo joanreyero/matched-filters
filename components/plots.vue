@@ -18,8 +18,8 @@
       </div>
     </div>
     <div class="w-11/12 mx-auto max-w-3xl pt-8 text-center">
-      <!-- <img :src="src" class="rounded-lg mx-auto shadow-lg border-gray-300 border w-full"/> -->
-      <pt/>
+      <pt v-if="active=='pos'" :directions="directions"/>
+      <img v-else :src="src" class="rounded-lg mx-auto shadow-lg border-gray-300 border w-full"/>
       <p v-if="loading" class="loading mx-auto"> Loading </p>
     </div>
   </div>
@@ -38,6 +38,10 @@ export default {
       required: false,
       type: Boolean,
       default: false
+    },
+    directions: {
+      type: Object,
+      required: true
     }
   },
 
